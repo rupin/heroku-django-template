@@ -1,21 +1,4 @@
-"""
-Django settings for {{ project_name }} project on Heroku. For more info, see:
-https://github.com/heroku/heroku-django-template
 
-For more information on this file, see
-https://docs.djangoproject.com/en/2.0/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/2.0/ref/settings/
-"""
-
-import os
-import dj_database_url
-import django_heroku
-from pathlib import Path
-from google.oauth2 import service_account
-import json
-from .base import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).parent.parent
@@ -23,20 +6,16 @@ PROJECT_ROOT = Path(__file__).parent.parent
 #print(PROJECT_ROOT)
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
+AUTH_USER_MODEL = '{{ project_name }}.CustomUser' 
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "w+1*!qiejv4x79k3wq)$k%q$0mpp+)6*ca7b88^$o%_)&(th-$"
+TEMPLATE_DEBUG = True
+WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+ROOT_URLCONF = '{{ project_name }}.urls'
 
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_SSL_REDIRECT = False
 
 # Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -64,7 +43,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = '{{ project_name }}.urls'
+
 
 TEMPLATES = [
     {
@@ -82,26 +61,6 @@ TEMPLATES = [
         },
     },
 ]
-TEMPLATE_DEBUG = True
-
-WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '{{ project_name }}',                      
-        'USER': '{{ project_name }}user',
-        'PASSWORD': '{{ project_name }}user',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -127,17 +86,14 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Allow all host headers
-ALLOWED_HOSTS = ['localhost', '192.168.1.101']
+LOGIN_URL = '/login/'
+# my_project/settings.py
+LOGIN_REDIRECT_URL = '/profile'
+LOGOUT_REDIRECT_URL = '/'
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 STATIC_URL = '/static/'
@@ -156,31 +112,16 @@ STATIC_DIR = os.path.join(PROJECT_ROOT, 'static')
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-#Save Media Files on S3
-#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-#AWS_ACCESS_KEY_ID=os.environ.get("AWS_ACCESS_KEY_ID")
-#AWS_SECRET_ACCESS_KEY=os.environ.get("AWS_SECRET_ACCESS_KEY")
-#AWS_STORAGE_BUCKET_NAME=os.environ.get("AWS_STORAGE_BUCKET_NAME")
-#AWS_DEFAULT_ACL=os.environ.get("AWS_DEFAULT_ACL")
-#AWS_AUTO_CREATE_BUCKET =True
-#AWS_S3_REGION_NAME =os.environ.get("AWS_S3_REGION_NAME")
+
+
+
 LOGIN_URL = '/login/'
 # my_project/settings.py
 LOGIN_REDIRECT_URL = '/profile'
 LOGOUT_REDIRECT_URL = '/'
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-GS_BUCKET_NAME = '{{ project_name }}files_local'
-GS_AUTO_CREATE_BUCKET=True
+GOOGLE_STORAGE=True
 
-with open('credentials/credentials.json') as f:
-    credentials = json.load(f)
 
-service_account_info = credentials
-#print(service_account_info)
-GS_CREDENTIALS = service_account.Credentials.from_service_account_info(service_account_info)
-GS_PROJECT_ID=service_account_info["project_id"]
-# Activate Django-Heroku.
-django_heroku.settings(locals())
 
